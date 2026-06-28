@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hybrid System Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#000;color:#fff;font-family:'Barlow',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#222;border-radius:2px}
+
+/* ANNOUNCE */
+.announce{background:#ccff00;color:#000;padding:8px;text-align:center;font-size:11px;font-weight:800;letter-spacing:2px;overflow:hidden;white-space:nowrap}
+.announce span{display:inline-block;animation:ticker 30s linear infinite}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* NAV */
+nav{background:#000;border-bottom:2px solid #ccff00;padding:0 16px;position:sticky;top:0;z-index:200}
+.nav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;height:56px;gap:12px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:#fff;flex-shrink:0}
+.nav-cats{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-cats::-webkit-scrollbar{display:none}
+.cat-btn{background:none;border:none;color:#888;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;padding:6px 9px;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.15s;text-transform:uppercase}
+.cat-btn.active,.cat-btn:hover{color:#ccff00;border-bottom-color:#ccff00}
+.cart-nav-btn{background:#ccff00;border:none;color:#000;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;padding:8px 14px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px;flex-shrink:0;transition:transform 0.15s}
+.cart-nav-btn:hover{transform:scale(1.04)}
+.cart-nav-btn .badge{background:#000;color:#ccff00;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;font-family:'Barlow',sans-serif}
+.cart-nav-btn .badge.show{display:flex}
+
+/* HERO */
+.hero{background:linear-gradient(180deg,#000 0%,#080808 100%);padding:32px 16px 24px;text-align:center;border-bottom:1px solid #111}
+.hero-badge{display:inline-block;border:1px solid #ccff00;color:#ccff00;padding:4px 14px;font-size:10px;letter-spacing:3px;margin-bottom:12px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,10vw,80px);line-height:1;letter-spacing:4px;color:#fff}
+.hero h1 span{color:#ccff00;display:block}
+.hero p{color:#c0c0c0;font-size:12px;margin:8px 0 0;letter-spacing:1px;line-height:1.7}
+
+/* GRID */
+.grid{max-width:1000px;margin:0 auto;padding:20px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{background:#0c0c0c;border:1px solid #1a1a1a;border-radius:4px;overflow:hidden;cursor:pointer;transition:border-color 0.2s,transform 0.2s}
+.card:hover{border-color:#ccff00;transform:translateY(-3px)}
+.card-img{aspect-ratio:1;overflow:hidden;position:relative;background:#111}
+.card-img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform 0.3s}
+.card:hover .card-img img{transform:scale(1.05)}
+.card-badge{position:absolute;top:10px;left:10px;background:#ccff00;color:#000;font-size:9px;font-weight:800;letter-spacing:2px;padding:3px 7px}
+.card-cat-tag{position:absolute;top:10px;right:10px;color:#ccff00;font-size:9px;font-weight:700;letter-spacing:2px}
+.card-body{padding:12px}
+.card-cat-lbl{font-size:9px;color:#c0c0c0;letter-spacing:3px;font-weight:700;margin-bottom:2px}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;margin-bottom:4px;line-height:1.1;color:#f0f0f0}
+.card-from{font-size:11px;color:#c0c0c0;margin-bottom:10px}
+.card-from strong{color:#fff}
+.btn-ver{width:100%;background:transparent;border:1px solid #2a2a2a;color:#c0c0c0;padding:8px;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.18s;border-radius:2px}
+.btn-ver:hover{background:#ccff00;color:#000;border-color:#ccff00}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:300;display:none;overflow-y:auto;padding:10px}
+.overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.modal{background:#0c0c0c;border:1px solid #1a1a1a;border-radius:6px;width:100%;max-width:520px;margin:auto;overflow:hidden;animation:pop 0.22s ease}
+@keyframes pop{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-img{aspect-ratio:4/3;position:relative;overflow:hidden;background:#111}
+.modal-img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.modal-close{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.85);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-badge-tag{position:absolute;top:10px;left:10px;background:#ccff00;color:#000;font-size:9px;font-weight:800;letter-spacing:2px;padding:3px 7px}
+.mbody{padding:16px}
+.mcat{font-size:9px;color:#c0c0c0;letter-spacing:4px;font-weight:700;margin-bottom:4px}
+.mname{font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,5vw,36px);letter-spacing:2px;line-height:1;margin-bottom:6px;color:#fff}
+.mdesc{font-size:12px;color:#c0c0c0;line-height:1.5;margin-bottom:14px}
+.sel-label{font-size:9px;color:#a0a0a0;letter-spacing:3px;font-weight:700;margin-bottom:7px;text-transform:uppercase}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:14px}
+.type-btn{background:#0d0d0d;border:1px solid #222;color:#e0e0e0;padding:8px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:2px;text-align:left;transition:all 0.15s}
+.type-btn:hover{border-color:#666}
+.type-btn.sel{border-color:#ccff00;background:#0a1200}
+.tname{display:block;margin-bottom:1px;font-size:10px}
+.tprice{display:block;color:#ccff00;font-size:13px;font-weight:800}
+.type-btn.sel .tname{color:#ccff00}
+.size-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.size-btn{background:#0d0d0d;border:1px solid #222;color:#c0c0c0;width:40px;height:40px;font-size:11px;font-weight:700;cursor:pointer;border-radius:2px;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+.size-btn:hover{border-color:#666;color:#fff}
+.size-btn.sel{border-color:#ccff00;background:#0a1200;color:#ccff00}
+.qty-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.qty-btn{background:#0d0d0d;border:1px solid #222;color:#fff;width:34px;height:34px;font-size:18px;font-weight:700;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+.qty-btn:hover{border-color:#ccff00;color:#ccff00}
+.qty-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;min-width:28px;text-align:center}
+.qty-label{font-size:11px;color:#888}
+.extra-input{width:100%;background:#0d0d0d;border:1px solid #222;color:#fff;padding:8px 10px;font-size:12px;border-radius:2px;outline:none;font-family:'Barlow',sans-serif;resize:none;height:60px;margin-bottom:14px}
+.extra-input:focus{border-color:#ccff00}
+.extra-input::placeholder{color:#444}
+.custom-box{background:linear-gradient(135deg,#0a1200,#0d0d0d);border:1px solid #ccff00;border-radius:3px;padding:10px 12px;margin-bottom:10px;display:flex;gap:8px;align-items:flex-start}
+.custom-box.silver{border-color:#555;background:linear-gradient(135deg,#0d0d0d,#111)}
+.custom-box-icon{font-size:16px;flex-shrink:0}
+.custom-box-text{font-size:11px;color:#c0c0c0;line-height:1.6}
+.custom-box-text strong{color:#ccff00}
+.custom-box.silver .custom-box-text strong{color:#fff}
+.custom-box-text span{color:#fff}
+.disc-row{display:flex;gap:6px;margin-bottom:5px}
+.disc-input{flex:1;background:#0d0d0d;border:1px solid #222;color:#fff;padding:8px 10px;font-size:11px;letter-spacing:2px;border-radius:2px;outline:none;font-family:'Barlow',sans-serif;text-transform:uppercase}
+.disc-input:focus{border-color:#ccff00}
+.disc-input::placeholder{color:#333}
+.disc-apply{background:#1a1a1a;border:none;color:#e0e0e0;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:2px;white-space:nowrap;transition:all 0.15s}
+.disc-apply:hover{background:#ccff00;color:#000}
+.disc-msg{font-size:11px;margin-bottom:12px;min-height:14px}
+.disc-ok{color:#ccff00}
+.disc-err{color:#ff4444}
+.btn-add-cart{width:100%;background:#ccff00;border:none;color:#000;padding:14px;font-size:15px;font-weight:800;letter-spacing:3px;cursor:pointer;border-radius:3px;transition:transform 0.15s,box-shadow 0.15s;margin-bottom:6px}
+.btn-add-cart:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(204,255,0,0.3)}
+.btn-add-cart:disabled{background:#1a1a1a;color:#333;cursor:not-allowed;transform:none;box-shadow:none}
+.modal-hint{text-align:center;font-size:10px;color:#555;letter-spacing:1px}
+
+/* CART DRAWER */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:400;display:none}
+.cart-overlay.open{display:block}
+.cart-drawer{position:absolute;right:0;top:0;bottom:0;width:min(420px,100vw);background:#0a0a0a;border-left:1px solid #1a1a1a;display:flex;flex-direction:column;animation:slideIn 0.28s cubic-bezier(.22,.68,0,1.2)}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.cart-head{padding:18px 20px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.cart-head-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:#fff}
+.cart-head-right{display:flex;align-items:center;gap:12px}
+.cart-clear{background:none;border:none;color:#444;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:'Barlow',sans-serif;font-weight:600;transition:color 0.15s;text-transform:uppercase}
+.cart-clear:hover{color:#ff4444}
+.cart-x{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1}
+.cart-items{flex:1;overflow-y:auto;padding:16px 20px}
+.cart-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#222;gap:12px}
+.cart-empty-state .icon{font-size:48px}
+.cart-empty-state p{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#333}
+.ci{background:#111;border:1px solid #1a1a1a;border-radius:4px;padding:12px;margin-bottom:10px;display:flex;gap:12px}
+.ci-img{width:64px;height:64px;border-radius:3px;overflow:hidden;flex-shrink:0;background:#0d0d0d}
+.ci-img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.ci-info{flex:1;min-width:0}
+.ci-ref{font-size:9px;color:#555;letter-spacing:2px;margin-bottom:2px}
+.ci-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#fff;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-meta{font-size:11px;color:#888;margin-bottom:4px}
+.ci-note{font-size:10px;color:#666;font-style:italic;margin-bottom:4px}
+.ci-price-row{display:flex;align-items:center;justify-content:space-between}
+.ci-price{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#ccff00}
+.ci-controls{display:flex;align-items:center;gap:6px}
+.ci-qty-btn{background:#1a1a1a;border:1px solid #2a2a2a;color:#fff;width:24px;height:24px;font-size:14px;font-weight:700;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.ci-qty-btn:hover{border-color:#ccff00;color:#ccff00}
+.ci-qty{font-size:13px;font-weight:700;color:#fff;min-width:20px;text-align:center}
+.ci-del{background:none;border:none;color:#333;cursor:pointer;font-size:16px;transition:color 0.15s;padding:2px 4px}
+.ci-del:hover{color:#ff4444}
+.cart-foot{padding:16px 20px;border-top:1px solid #1a1a1a;flex-shrink:0}
+.ship-info{margin-bottom:12px}
+.ship-bar-wrap{height:3px;background:#111;border-radius:2px;margin-bottom:6px;overflow:hidden}
+.ship-bar{height:100%;background:#ccff00;border-radius:2px;transition:width 0.4s}
+.ship-msg{font-size:11px;color:#888;text-align:center;letter-spacing:1px}
+.ship-msg strong{color:#ccff00}
+.cart-summary{background:#111;border:1px solid #1a1a1a;border-radius:4px;padding:12px;margin-bottom:14px}
+.cart-sum-row{display:flex;justify-content:space-between;font-size:12px;color:#888;padding:3px 0}
+.cart-sum-row.disc{color:#ccff00}
+.cart-sum-divider{border:none;border-top:1px solid #222;margin:8px 0}
+.cart-sum-total{display:flex;justify-content:space-between;align-items:baseline}
+.cart-sum-total label{font-size:12px;color:#c0c0c0;letter-spacing:2px;text-transform:uppercase}
+.cart-sum-total span{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#ccff00}
+.disc-cart-row{display:flex;gap:6px;margin-bottom:10px}
+.disc-cart-input{flex:1;background:#0d0d0d;border:1px solid #222;color:#fff;padding:8px 10px;font-size:11px;letter-spacing:2px;border-radius:2px;outline:none;font-family:'Barlow',sans-serif;text-transform:uppercase}
+.disc-cart-input:focus{border-color:#ccff00}
+.disc-cart-input::placeholder{color:#333}
+.disc-cart-apply{background:#1a1a1a;border:none;color:#e0e0e0;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:2px;white-space:nowrap;transition:all 0.15s}
+.disc-cart-apply:hover{background:#ccff00;color:#000}
+.disc-cart-msg{font-size:11px;margin-bottom:10px;min-height:14px}
+.btn-send-wa{width:100%;background:#25D366;border:none;color:#fff;padding:15px;font-size:15px;font-weight:800;letter-spacing:2px;cursor:pointer;border-radius:3px;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.15s,box-shadow 0.15s}
+.btn-send-wa:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(37,211,102,0.3)}
+.btn-send-wa:disabled{background:#111;color:#333;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-send-wa svg{width:18px;height:18px;fill:#fff;flex-shrink:0}
+.wa-hint{text-align:center;font-size:10px;color:#444;margin-top:6px;letter-spacing:1px}
+
+/* WA FLOAT */
+.wa-float{position:fixed;bottom:20px;right:20px;z-index:100;background:#25D366;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,211,102,0.4);text-decoration:none;transition:transform 0.2s}
+.wa-float:hover{transform:scale(1.1)}
+.wa-float svg{width:26px;height:26px;fill:#fff}
+
+/* ADDED ANIM */
+.added-flash{animation:flashGreen 0.5s ease}
+@keyframes flashGreen{0%{background:#ccff00}100%{background:#0a0a0a}}
+
+footer{background:#000;border-top:1px solid #0d0d0d;padding:20px 16px;text-align:center;color:#555;font-size:10px;letter-spacing:2px;margin-top:24px}
+footer strong{color:#888}
+.empty{grid-column:1/-1;text-align:center;padding:60px;color:#333;font-size:11px;letter-spacing:3px}
+@media(max-width:480px){
+  .grid{grid-template-columns:1fr 1fr;gap:8px;padding:10px 8px}
+  .card-name{font-size:14px}
+  .card-body{padding:9px}
+  .type-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="announce">
+  <span>🏷 CÓDIGO HYBRID15 — 15% DESCUENTO &nbsp;·&nbsp; 🚚 ENVÍO GRATIS +50€ &nbsp;·&nbsp; 💳 BIZUM AL 652 34 79 47 &nbsp;·&nbsp; 🎨 PERSONALIZACIÓN DE TEXTO +4.95€ &nbsp;·&nbsp; 🏆 DISEÑO NUEVO PARA TU BOX — MÍNIMO 5 UDS &nbsp;·&nbsp; 📦 ENTREGA 3-5 DÍAS &nbsp;·&nbsp; 🏷 CÓDIGO HYBRID15 — 15% DESCUENTO &nbsp;·&nbsp; 🚚 ENVÍO GRATIS +50€ &nbsp;·&nbsp; 💳 BIZUM AL 652 34 79 47 &nbsp;·&nbsp; 🎨 PERSONALIZACIÓN DE TEXTO +4.95€ &nbsp;·&nbsp; 🏆 DISEÑO NUEVO PARA TU BOX — MÍNIMO 5 UDS &nbsp;·&nbsp; 📦 ENTREGA 3-5 DÍAS &nbsp;·&nbsp;</span>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">HYBRID</div>
+    <div class="nav-cats" id="navCats"></div>
+    <button class="cart-nav-btn" onclick="openCart()">
+      🛒 CARRITO <span class="badge" id="cartBadge">0</span>
+    </button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">⚡ CATÁLOGO 2026 — 39 DISEÑOS</div>
+  <h1>TRAIN HARD<span>LIVE HARDER</span></h1>
+  <p>Elige · Añade al carrito · Pide por WhatsApp · Paga por Bizum</p>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<!-- PRODUCT MODAL -->
+<div class="overlay" id="overlay" onclick="closeIfBg(event)">
+  <div class="modal">
+    <div class="modal-img" id="mImg"></div>
+    <div class="mbody">
+      <div class="mcat" id="mCat"></div>
+      <div class="mname" id="mName"></div>
+      <div class="mdesc" id="mDesc"></div>
+
+      <div class="sel-label">Tipo de camiseta y precio</div>
+      <div class="type-grid" id="typeGrid"></div>
+
+      <div class="sel-label">Talla</div>
+      <div class="size-row" id="sizeRow"></div>
+
+      <div class="sel-label">Cantidad</div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-num" id="qtyNum">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+        <span class="qty-label">unidades</span>
+      </div>
+
+      <div class="sel-label">Personalización / notas (opcional)</div>
+      <textarea class="extra-input" id="extraNote" placeholder="Ej: cambiar texto por 'Carlos #7' (+4.95€) · o cualquier otra indicación"></textarea>
+
+      <div class="custom-box">
+        <div class="custom-box-icon">✏️</div>
+        <div class="custom-box-text">
+          <strong>¿Cambiar el texto del diseño?</strong> Solo <span>+4.95€</span> — escríbelo arriba.
+        </div>
+      </div>
+      <div class="custom-box silver" style="margin-bottom:14px">
+        <div class="custom-box-icon">🏆</div>
+        <div class="custom-box-text">
+          <strong>¿Diseño nuevo para tu box o equipo?</strong> Pedido mínimo <span>5 unidades</span>. Consúltanos por WhatsApp.
+        </div>
+      </div>
+
+      <div class="sel-label">🏷 Código descuento (opcional)</div>
+      <div class="disc-row">
+        <input class="disc-input" id="discInput" placeholder="HYBRID15" maxlength="20"/>
+        <button class="disc-apply" onclick="applyDisc()">APLICAR</button>
+      </div>
+      <div class="disc-msg" id="discMsg"></div>
+
+      <button class="btn-add-cart" id="addCartBtn" disabled onclick="addToCart()">
+        🛒 SELECCIONA TIPO Y TALLA
+      </button>
+      <div class="modal-hint">Los colores disponibles varían según el tipo — consúltanos</div>
+    </div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartBg(event)">
+  <div class="cart-drawer">
+    <div class="cart-head">
+      <span class="cart-head-title" id="cartTitle">CARRITO</span>
+      <div class="cart-head-right">
+        <button class="cart-clear" onclick="clearCart()">Vaciar</button>
+        <button class="cart-x" onclick="closeCart()">×</button>
+      </div>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="ship-info">
+        <div class="ship-bar-wrap"><div class="ship-bar" id="shipBar" style="width:0%"></div></div>
+        <div class="ship-msg" id="shipMsg"></div>
+      </div>
+      <div class="cart-summary" id="cartSummary"></div>
+      <div class="disc-cart-row">
+        <input class="disc-cart-input" id="discCartInput" placeholder="CÓDIGO DESCUENTO"/>
+        <button class="disc-cart-apply" onclick="applyCartDisc()">APLICAR</button>
+      </div>
+      <div class="disc-cart-msg" id="discCartMsg"></div>
+      <button class="btn-send-wa" id="sendWaBtn" onclick="sendWA()">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.0
